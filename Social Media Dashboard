@@ -1,1 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialPulse | Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #8378ff;
+            --secondary: #a29bfe;
+            --success: #00b894;
+            --danger: #ff6b6b;
+            --warning: #ffd93d;
+            --info: #6cbcff;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #dfe6e9;
+            --card-bg: #ffffff;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --body-bg: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --header-bg: rgba(255, 255, 255, 0.9);
+            --shadow: 0 8px 24px rgba(149, 157, 165, 0.2);
+            --transition: all 0.3s ease;
+            --card-radius: 16px;
+            --header-height: 80px;
+        }
 
+        .dark-mode {
+            --card-bg: #2d3436;
+            --text-primary: #f5f6fa;
+            --text-secondary: #dfe6e9;
+            --body-bg: linear-gradient(135deg, #1a1e23 0%, #0d1014 100%);
+            --header-bg: rgba(125, 210, 234, 0.9);
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-image: var(--body-bg);
+            color: var(--text-primary);
+            transition: var(--transition);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--header-bg);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            height: var(--header-height);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: var(--primary);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo span {
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, var(--primary), var(--info));
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover:after {
+            width: 100%;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--gray);
+            width: 50px;
+            height: 26px;
+            border-radius: 15px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 3px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle i {
+            font-size: 12px;
+            position: absolute;
+            transition: var(--transition);
+            z-index: 1;
+        }
+
+        .theme-toggle .fa-sun {
+            left: 7px;
+            color: var(--warning);
+            opacity: 0;
+        }
+
+        .theme-toggle .fa-moon {
+            right: 7px;
+            color: var(--dark);
+            opacity: 1;
+        }
+
+        .dark-mode .theme-toggle .fa-sun {
+            opacity: 1;
+        }
+
+        .dark-mode .theme-toggle .fa-moon {
+            opacity: 0;
+        }
+
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            border-radius: 50%;
+            position: absolute;
+            left: 3px;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dark-mode .toggle-thumb {
+            left: 27px;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 12px;
+            border: none;
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            border: 1px solid var(--gray);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            color: white;
+            border: none;
+        }
+
+        .btn-notification {
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            opacity: 0.1;
+            background: var(--primary);
+        }
+
+        .stat-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            z-index: 1;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon.followers {
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .icon.engagement {
+            background: linear-gradient(45deg, var(--success), #00d9a6);
+            color: white;
+        }
+
+        .icon.reach {
+            background: linear-gradient(45deg, var(--warning), #ffed4e);
+            color: white;
+        }
+
+        .icon.likes {
+            background: linear-gradient(45deg, var(--danger), #ff8787);
+            color: white;
+        }
+
+        .stat-card h3 {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-card .change {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: auto;
+        }
+
+        .change.positive {
+            color: var(--success);
+        }
+
+        .change.negative {
+            color: var(--danger);
+        }
+
+        /* Chart Section */
+        .chart-container {
+            grid-column: span 3;
+            min-height: 350px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .chart {
+            background: var(--card-bg);
+            border-radius: 12px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .chart-area {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-grid {
+            display: flex;
+            height: 100%;
+            position: relative;
+        }
+
+        .chart-y-axis {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            height: 100%;
+            flex: 1;
+            padding-bottom: 25px;
+        }
+
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        .bar {
+            width: 100%;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: var(--transition);
+            background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%);
+            max-width: 60px;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        .bar-label {
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        /* Recent Activity */
+        .activity-container {
+            grid-column: span 1;
+        }
+
+        .activity-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 15px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--gray);
+            transition: var(--transition);
+        }
+
+        .activity-item:hover {
+            background: rgba(0, 0, 0, 0.02);
+            padding-left: 10px;
+            border-radius: 8px;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(45deg, var(--primary), var(--info));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .activity-content {
+            flex-grow: 1;
+        }
+
+        .activity-content p {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Top Platforms */
+        .platforms-container {
+            grid-column: span 4;
+        }
+
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .platform-card {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .platform-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            color: white;
+        }
+
+        .platform-icon {
+            font-size: 1.5rem;
+        }
+
+        .platform-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .instagram .platform-header {
+            background: linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7);
+        }
+
+        .tiktok .platform-header {
+            background: linear-gradient(45deg, #000000, #00f2ea, #ff0050);
+        }
+
+        .youtube .platform-header {
+            background: linear-gradient(45deg, #ff0000, #ff5e3a);
+        }
+
+        .twitter .platform-header {
+            background: linear-gradient(45deg, #1da1f2, #009ff5);
+        }
+
+        .platform-content {
+            padding: 20px;
+        }
+
+        .platform-metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .metric-value {
+            font-weight: 700;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: var(--gray);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-image: linear-gradient(
+                -45deg, 
+                rgba(255, 255, 255, 0.2) 25%, 
+                transparent 25%, 
+                transparent 50%, 
+                rgba(255, 255, 255, 0.2) 50%, 
+                rgba(255, 255, 255, 0.2) 75%, 
+                transparent 75%, 
+                transparent
+            );
+            z-index: 1;
+            background-size: 15px 15px;
+            animation: move 1s linear infinite;
+        }
+
+        @keyframes move {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 15px 15px;
+            }
+        }
+
+        .instagram .progress-fill {
+            background: linear-gradient(90deg, #f9ce34, #ee2a7b, #6228d7);
+            width: 78%;
+        }
+
+        .tiktok .progress-fill {
+            background: linear-gradient(90deg, #000000, #00f2ea, #ff0050);
+            width: 65%;
+        }
+
+        .youtube .progress-fill {
+            background: linear-gradient(90deg, #ff0000, #ff5e3a);
+            width: 52%;
+        }
+
+        .twitter .progress-fill {
+            background: linear-gradient(90deg, #1da1f2, #009ff5);
+            width: 45%;
+        }
+
+        /* New Components */
+        .quick-actions {
+            grid-column: span 4;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .action-1 .action-icon {
+            background: linear-gradient(45deg, var(--primary), var(--info));
+        }
+
+        .action-2 .action-icon {
+            background: linear-gradient(45deg, var(--success), #00d9a6);
+        }
+
+        .action-3 .action-icon {
+            background: linear-gradient(45deg, var(--warning), #ffed4e);
+        }
+
+        .action-4 .action-icon {
+            background: linear-gradient(45deg, var(--danger), #ff8787);
+        }
+
+        .action-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .action-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .chart-container {
+                grid-column: span 2;
+            }
+            
+            .activity-container {
+                grid-column: span 2;
+            }
+            
+            .platforms-grid, .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container, .activity-container {
+                grid-column: span 1;
+            }
+            
+            .platforms-grid, .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-content {
+                flex-wrap: wrap;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>SocialPulse</span>
+                </div>
+                
+                <div class="nav-links">
+                    <a href="#"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
+                    <a href="#"><i class="fas fa-file-alt"></i> Reports</a>
+                    <a href="#"><i class="fas fa-cog"></i> Settings</a>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                        <div class="toggle-thumb"></div>
+                    </div>
+                    <button class="btn btn-notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="btn">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <div class="action-card action-1">
+                <div class="action-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3>Create Post</h3>
+                <p>Schedule new content</p>
+            </div>
+            
+            <div class="action-card action-2">
+                <div class="action-icon">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3>Start Campaign</h3>
+                <p>Launch new campaign</p>
+            </div>
+            
+            <div class="action-card action-3">
+                <div class="action-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h3>Generate Report</h3>
+                <p>Create performance report</p>
+            </div>
+            
+            <div class="action-card action-4">
+                <div class="action-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Audience Insights</h3>
+                <p>View audience analytics</p>
+            </div>
+        </div>
+        
+        <div class="dashboard-grid">
+            <!-- Stat Cards -->
+            <div class="card stat-card">
+                <div class="icon followers">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Total Followers</h3>
+                <div class="value">24.8K</div>
+                <div class="change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12.5% from last week</span>
+                </div>
+            </div>
+            
+            <div class="card stat-card">
+                <div class="icon engagement">
+                    <i class="fas fa-comment-alt"></i>
+                </div>
+                <h3>Engagement Rate</h3>
+                <div class="value">7.2%</div>
+                <div class="change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>3.1% from last week</span>
+                </div>
+            </div>
+            
+            <div class="card stat-card">
+                <div class="icon reach">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Reach</h3>
+                <div class="value">156.4K</div>
+                <div class="change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>2.8% from last week</span>
+                </div>
+            </div>
+            
+            <div class="card stat-card">
+                <div class="icon likes">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Likes</h3>
+                <div class="value">12.7K</div>
+                <div class="change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>8.4% from last week</span>
+                </div>
+            </div>
+            
+            <!-- Chart Section -->
+            <div class="card chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Follower Growth</div>
+                    <div class="chart-actions">
+                        <select class="btn">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>Last 90 Days</option>
+                        </select>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Export
+                        </button>
+                    </div>
+                </div>
+                <div class="chart">
+                    <div class="chart-area">
+                        <div class="chart-grid">
+                            <div class="chart-y-axis">
+                                <span>80K</span>
+                                <span>60K</span>
+                                <span>40K</span>
+                                <span>20K</span>
+                                <span>0</span>
+                            </div>
+                            <div class="chart-bars">
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 40%;"></div>
+                                    <div class="bar-label">Mon</div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 60%;"></div>
+                                    <div class="bar-label">Tue</div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 75%;"></div>
+                                    <div class="bar-label">Wed</div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 90%;"></div>
+                                    <div class="bar-label">Thu</div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 50%;"></div>
+                                    <div class="bar-label">Fri</div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 70%;"></div>
+                                    <div class="bar-label">Sat</div>
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar" style="height: 85%;"></div>
+                                    <div class="bar-label">Sun</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="card activity-container">
+                <div class="chart-header">
+                    <div class="chart-title">Recent Activity</div>
+                    <button class="btn">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                <ul class="activity-list">
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>New post published</p>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>Weekly report is ready</p>
+                            <div class="activity-time">5 hours ago</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>Gained 124 new followers</p>
+                            <div class="activity-time">Yesterday</div>
+                        </div>
+                    </li>
+                    <li class="activity-item">
+                        <div class="activity-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="activity-content">
+                            <p>Campaign performance alert</p>
+                            <div class="activity-time">2 days ago</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Top Platforms -->
+            <div class="card platforms-container">
+                <div class="chart-header">
+                    <div class="chart-title">Top Platforms</div>
+                    <button class="btn">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+                <div class="platforms-grid">
+                    <div class="platform-card instagram">
+                        <div class="platform-header">
+                            <div class="platform-icon">
+                                <i class="fab fa-instagram"></i>
+                            </div>
+                            <div class="platform-name">Instagram</div>
+                        </div>
+                        <div class="platform-content">
+                            <div class="platform-metric">
+                                <span>Engagement</span>
+                                <span class="metric-value">78%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="platform-card tiktok">
+                        <div class="platform-header">
+                            <div class="platform-icon">
+                                <i class="fab fa-tiktok"></i>
+                            </div>
+                            <div class="platform-name">TikTok</div>
+                        </div>
+                        <div class="platform-content">
+                            <div class="platform-metric">
+                                <span>Engagement</span>
+                                <span class="metric-value">65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="platform-card youtube">
+                        <div class="platform-header">
+                            <div class="platform-icon">
+                                <i class="fab fa-youtube"></i>
+                            </div>
+                            <div class="platform-name">YouTube</div>
+                        </div>
+                        <div class="platform-content">
+                            <div class="platform-metric">
+                                <span>Engagement</span>
+                                <span class="metric-value">52%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="platform-card twitter">
+                        <div class="platform-header">
+                            <div class="platform-icon">
+                                <i class="fab fa-twitter"></i>
+                            </div>
+                            <div class="platform-name">Twitter</div>
+                        </div>
+                        <div class="platform-content">
+                            <div class="platform-metric">
+                                <span>Engagement</span>
+                                <span class="metric-value">45%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dark mode toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        
+        // Check for saved theme preference or respect OS preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme'))) {
+            body.classList.add('dark-mode');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+        
+        // Chart animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const bars = document.querySelectorAll('.bar');
+            bars.forEach(bar => {
+                const height = bar.style.height;
+                bar.style.height = '0%';
+                setTimeout(() => {
+                    bar.style.height = height;
+                }, 300);
+            });
+            
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-5px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
