@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Pulse - Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            background-color:  #6a11cb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Styles */
+        .app-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .app-title {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(120deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: red;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            font-size: 20px;
+            color: black;
+            font-weight: 500;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 25px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 12px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gray);
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Date Filter */
+        .date-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-options button {
+            padding: 8px 16px;
+            border: none;
+            background: var(--light);
+            color: var(--gray);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-options button.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gray);
+        }
+
+        .date-input {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+
+        /* KPI Cards */
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .kpi-title {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .kpi-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .icon-1 { background: var(--primary); }
+        .icon-2 { background: var(--success); }
+        .icon-3 { background: var(--accent); }
+        .icon-4 { background: var(--warning); }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .kpi-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #28a745;
+            font-weight: 500;
+        }
+
+        .kpi-trend.down {
+            color: #dc3545;
+        }
+
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-actions button {
+            background: var(--light);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-actions button:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .chart {
+            position: relative;
+            height: 300px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--light);
+            border-radius: var(--border-radius);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .date-filter {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-options {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .app-title {
+                font-size: 32px;
+            }
+            
+            .app-subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1 class="app-title">Social Pulse</h1>
+            <p class="app-subtitle">Analytics Dashboard</p>
+        </header>
+        
+        <!-- Dashboard -->
+        <div class="dashboard">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <h2 class="sidebar-title"><i class="fas fa-filter"></i> Filter Analytics</h2>
+                
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active"><i class="fas fa-globe"></i> All Platforms</a></li>
+                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a></li>
+                    <li><a href="#"><i class="fab fa-tiktok"></i> TikTok</a></li>
+                    <li><a href="#"><i class="fab fa-youtube"></i> YouTube</a></li>
+                </ul>
+                
+                <h2 class="sidebar-title" style="margin-top: 30px;"><i class="fas fa-chart-line"></i> Metrics</h2>
+                
+                <ul class="sidebar-menu">
+                    <li><a href="#"><i class="fas fa-eye"></i> Impressions</a></li>
+                    <li><a href="#"><i class="fas fa-user-plus"></i> Followers</a></li>
+                    <li><a href="#"><i class="fas fa-heart"></i> Engagement</a></li>
+                    <li><a href="#"><i class="fas fa-share-alt"></i> Reach</a></li>
+                    <li><a href="#"><i class="fas fa-link"></i> Clicks</a></li>
+                    <li><a href="#"><i class="fas fa-dollar-sign"></i> Conversions</a></li>
+                </ul>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Date Filter -->
+                <div class="date-filter">
+                    <div class="filter-options">
+                        <button class="active" data-days="1">Today</button>
+                        <button data-days="7">Last 7 Days</button>
+                        <button data-days="30">Last 30 Days</button>
+                        <button data-days="90">Last 90 Days</button>
+                        <button id="custom-range-btn">Custom Range</button>
+                    </div>
+                    
+                    <div class="date-range">
+                        <i class="far fa-calendar-alt"></i>
+                        <span id="date-range-text">June 1, 2023 - June 30, 2023</span>
+                        <input type="date" id="start-date" class="date-input" style="display: none;">
+                        <input type="date" id="end-date" class="date-input" style="display: none;">
+                    </div>
+                </div>
+                
+                <!-- KPI Cards -->
+                <div class="kpi-cards">
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-title">Total Followers</div>
+                            <div class="kpi-icon icon-1">
+                                <i class="fas fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value">24.8K</div>
+                        <div class="kpi-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+12.5% from last week</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-title">Engagement Rate</div>
+                            <div class="kpi-icon icon-2">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value">7.2%</div>
+                        <div class="kpi-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+3.1% from last week</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-title">Reach</div>
+                            <div class="kpi-icon icon-3">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value">156.4K</div>
+                        <div class="kpi-trend down">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>-2.8% from last week</span>
+                        </div>
+                    </div>
+                    
+                    <div class="kpi-card">
+                        <div class="kpi-header">
+                            <div class="kpi-title">Likes</div>
+                            <div class="kpi-icon icon-4">
+                                <i class="fas fa-thumbs-up"></i>
+                            </div>
+                        </div>
+                        <div class="kpi-value">12.7K</div>
+                        <div class="kpi-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>+8.4% from last week</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <!-- Engagement Chart -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Follower Growth</h3>
+                            <div class="chart-actions">
+                                <button>Last 7 Days</button>
+                                <button>Export</button>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <canvas id="followerChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Recent Activity -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Recent Activity</h3>
+                            <div class="chart-actions">
+                                <button>View All</button>
+                            </div>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-plus"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">New post published</div>
+                                    <div class="activity-time">3 hours ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Weekly report generated</div>
+                                    <div class="activity-time">Yesterday</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Campaign performance updated</div>
+                                    <div class="activity-time">2 days ago</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-bullhorn"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">New campaign started</div>
+                                    <div class="activity-time">4 days ago</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Charts -->
+                <div class="charts-grid">
+                    <!-- Platform Distribution -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Platform Distribution</h3>
+                            <div class="chart-actions">
+                                <button>By Engagement</button>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <canvas id="platformChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Audience Demographics -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3 class="chart-title">Audience Demographics</h3>
+                            <div class="chart-actions">
+                                <button>By Age</button>
+                            </div>
+                        </div>
+                        <div class="chart">
+                            <canvas id="demographicsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Follower Growth Chart (Line Chart)
+            const followerCtx = document.getElementById('followerChart').getContext('2d');
+            const followerChart = new Chart(followerCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jun 1', 'Jun 5', 'Jun 10', 'Jun 15', 'Jun 20', 'Jun 25', 'Jun 30'],
+                    datasets: [{
+                        label: 'Total Followers',
+                        data: [23500, 23800, 24000, 24200, 24300, 24500, 24800],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 23000,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Platform Distribution (Doughnut Chart)
+            const platformCtx = document.getElementById('platformChart').getContext('2d');
+            const platformChart = new Chart(platformCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Instagram', 'Facebook', 'Twitter', 'TikTok', 'LinkedIn'],
+                    datasets: [{
+                        data: [35, 25, 20, 15, 5],
+                        backgroundColor: [
+                            '#4361ee',
+                            '#f72585',
+                            '#4cc9f0',
+                            '#7209b7',
+                            '#3a0ca3'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Add numbers to the pie chart
+            Chart.register({
+                id: 'doughnutCenterText',
+                afterDraw: function(chart) {
+                    if (chart.config.type === 'doughnut') {
+                        const ctx = chart.ctx;
+                        const chartArea = chart.chartArea;
+                        const centerX = (chartArea.left + chartArea.right) / 2;
+                        const centerY = (chartArea.top + chartArea.bottom) / 2;
+                        
+                        ctx.save();
+                        ctx.font = 'bold 16px sans-serif';
+                        ctx.fillStyle = '#212529';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('Platforms', centerX, centerY - 10);
+                        
+                        ctx.font = 'bold 20px sans-serif';
+                        ctx.fillText('100%', centerX, centerY + 10);
+                        ctx.restore();
+                    }
+                }
+            });
+            
+            // Demographics Chart (Bar Chart)
+            const demographicsCtx = document.getElementById('demographicsChart').getContext('2d');
+            const demographicsChart = new Chart(demographicsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+                    datasets: [{
+                        label: 'Age Distribution',
+                        data: [30, 35, 20, 10, 4, 1],
+                        backgroundColor: '#4361ee',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Date range functionality
+            const dateRangeText = document.getElementById('date-range-text');
+            const startDateInput = document.getElementById('start-date');
+            const endDateInput = document.getElementById('end-date');
+            const customRangeBtn = document.getElementById('custom-range-btn');
+            const filterButtons = document.querySelectorAll('.filter-options button');
+            
+            // Set initial date range
+            updateDateRange(30);
+            
+            // Add event listeners to filter buttons
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.id !== 'custom-range-btn') {
+                        // Remove active class from all buttons
+                        filterButtons.forEach(btn => btn.classList.remove('active'));
+                        
+                        // Add active class to clicked button
+                        this.classList.add('active');
+                        
+                        // Hide date inputs if not custom range
+                        startDateInput.style.display = 'none';
+                        endDateInput.style.display = 'none';
+                        dateRangeText.style.display = 'inline';
+                        
+                        // Update date range text
+                        const days = parseInt(this.getAttribute('data-days')) || 30;
+                        updateDateRange(days);
+                    }
+                });
+            });
+            
+            // Custom range button functionality
+            customRangeBtn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to custom range button
+                this.classList.add('active');
+                
+                // Show date inputs
+                startDateInput.style.display = 'inline';
+                endDateInput.style.display = 'inline';
+                dateRangeText.style.display = 'none';
+                
+                // Set default dates for inputs (last 30 days)
+                const endDate = new Date();
+                const startDate = new Date();
+                startDate.setDate(startDate.getDate() - 30);
+                
+                startDateInput.valueAsDate = startDate;
+                endDateInput.valueAsDate = endDate;
+                
+                // Add event listeners to date inputs
+                startDateInput.onchange = updateCustomDateRange;
+                endDateInput.onchange = updateCustomDateRange;
+            });
+            
+            // Function to update date range text
+            function updateDateRange(days) {
+                const endDate = new Date();
+                const startDate = new Date();
+                startDate.setDate(startDate.getDate() - days);
+                
+                dateRangeText.textContent = formatDate(startDate) + ' - ' + formatDate(endDate);
+            }
+            
+            // Function to update custom date range
+            function updateCustomDateRange() {
+                if (startDateInput.value && endDateInput.value) {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    
+                    dateRangeText.textContent = formatDate(startDate) + ' - ' + formatDate(endDate);
+                    dateRangeText.style.display = 'inline';
+                    startDateInput.style.display = 'none';
+                    endDateInput.style.display = 'none';
+                    
+                    // Find and activate the appropriate button based on day difference
+                    const dayDiff = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                    
+                    let matchingButton = null;
+                    filterButtons.forEach(button => {
+                        const buttonDays = parseInt(button.getAttribute('data-days'));
+                        if (buttonDays === dayDiff) {
+                            matchingButton = button;
+                        }
+                    });
+                    
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    if (matchingButton) {
+                        matchingButton.classList.add('active');
+                    } else {
+                        customRangeBtn.classList.add('active');
+                    }
+                }
+            }
+            
+            // Helper function to format date as "Month Day, Year"
+            function formatDate(date) {
+                const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                               'July', 'August', 'September', 'October', 'November', 'December'];
+                return months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear();
+            }
+        });
+    </script>
+</body>
+</html>
