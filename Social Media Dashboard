@@ -758,7 +758,7 @@
                 
                 <div class="nav-links">
                     <a href="#"><i class="fas fa-home"></i> Dashboard</a>
-                    <a href="#"><i class="fas fa-chart-line"></i> Analytics</a>
+                    <a href="Analytics.html"><i class="fas fa-chart-line"></i> Analytics</a>
                     <a href="#"><i class="fas fa-file-alt"></i> Reports</a>
                     <a href="#"><i class="fas fa-cog"></i> Settings</a>
                 </div>
